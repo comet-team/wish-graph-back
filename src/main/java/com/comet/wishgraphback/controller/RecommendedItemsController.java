@@ -1,6 +1,7 @@
 package com.comet.wishgraphback.controller;
 
 import com.comet.wishgraphback.model.dto.response.GraphElementDto;
+import com.comet.wishgraphback.model.dto.response.NftDto;
 import com.comet.wishgraphback.model.dto.response.RecommendedItemsDto;
 import com.comet.wishgraphback.service.GraphBuilderService;
 import com.comet.wishgraphback.service.impl.NftRecommendationServiceImpl;
@@ -29,5 +30,10 @@ public class RecommendedItemsController {
     @GetMapping("/graph")
     public List<GraphElementDto> getGrapth(@RequestParam(name = "walletToken") String walletToken) {
         return graphBuilderService.buildGraph(walletToken);
+    }
+
+    @GetMapping("/user-items")
+    public List<NftDto> getItems(@RequestParam(name = "walletToken") String walletToken) {
+        return graphBuilderService.getItemsOfUser(walletToken);
     }
 }

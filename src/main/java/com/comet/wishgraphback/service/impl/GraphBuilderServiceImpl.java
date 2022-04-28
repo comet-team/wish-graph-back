@@ -2,8 +2,10 @@ package com.comet.wishgraphback.service.impl;
 
 import com.comet.wishgraphback.adapter.ItemsAdapter;
 import com.comet.wishgraphback.adapter.OwnershipAdapter;
+import com.comet.wishgraphback.mapper.Mapper;
 import com.comet.wishgraphback.model.dto.response.GraphElementDto;
 import com.comet.wishgraphback.model.dto.response.ItemsByOwnerDto;
+import com.comet.wishgraphback.model.dto.response.NftDto;
 import com.comet.wishgraphback.model.dto.response.OwnersResponseDto;
 import com.comet.wishgraphback.service.GraphBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GraphBuilderServiceImpl implements GraphBuilderService {
@@ -19,10 +22,18 @@ public class GraphBuilderServiceImpl implements GraphBuilderService {
     private ItemsAdapter itemsAdapter;
     @Autowired
     private OwnershipAdapter ownershipAdapter;
+    @Autowired
+    private Mapper mapper;
 
     @Override
     public List<GraphElementDto> buildGraph(String walletId) {
         return buildGraphFromCustomerToCreator(3, walletId, "");
+    }
+
+    @Override
+    public List<NftDto> getItemsOfUser(String walletId) {
+        ItemsByOwnerDto itemsByOwner = itemsAdapter.getItemsByOwner(walletId);
+        return itemsByOwner.getItems().stream().map(mapper::mapRecommendedNftDto).collect(Collectors.toList());
     }
 
     private List<GraphElementDto> buildGraphFromCustomerToCreator(int depth, String customerWallet, String previousCreator) {

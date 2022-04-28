@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class RecommendedNftDto {
+public class NftDto {
     private String id;
     private String url;
     private String title;

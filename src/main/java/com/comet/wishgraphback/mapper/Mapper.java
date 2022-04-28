@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 @Service
 public class Mapper {
 
-    public RecommendedNftDto mapRecommendedNftDto(ItemDto itemDto) {
-        return RecommendedNftDto.builder()
+    public NftDto mapRecommendedNftDto(ItemDto itemDto) {
+        return NftDto.builder()
                 .id(itemDto.getId())
                 .title(getName(itemDto))
                 .url(getImageUrl(itemDto))
