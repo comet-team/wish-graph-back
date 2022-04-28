@@ -9,10 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,22 +33,24 @@ public class NftRecommendationServiceImpl implements NftRecommendationService {
         log.info("Depth: " + depth);
         log.info("Size of walletIds: " + walletIds.size());
         boolean isCurrentCreator = depth % 2 == 0;
-        Map<String, List<ItemDto>> items = new HashMap<>();
+        Map<String, Set<ItemDto>> items = new HashMap<>();
         List<String> currentWallets = new ArrayList<>();
 
         if (isCurrentCreator) {
             for (String walletId : walletIds) {
                 ItemsByOwnerDto itemsByCreator = itemsAdapter.getItemsByCreator(walletId);
                 itemsByCreator.getItems().stream()
-                        .limit(4)
+                        .limit(10)
                         .forEach(item -> {
                             OwnersResponseDto ownershipsByItem = ownershipAdapter.getOwnershipsByItem(item.getId());
                             if (ownershipsByItem.getOwnerships().size() != 0 && itemIsSoldOut(walletId, ownershipsByItem)) {
                                 if (!items.containsKey(walletId)) {
-                                    items.put(walletId, new ArrayList<>());
+                                    items.put(walletId, new HashSet<>());
                                 }
-                                items.get(walletId).add(item);
-                                currentWallets.add(ownershipsByItem.getOwnerships().get(0).getOwner());
+                                if (item.getMeta() != null) {
+                                    items.get(walletId).add(item);
+                                    currentWallets.add(ownershipsByItem.getOwnerships().get(0).getOwner());
+                                }
                             }
                         });
             }
@@ -59,7 +58,7 @@ public class NftRecommendationServiceImpl implements NftRecommendationService {
             for (String walletId : walletIds) {
                 ItemsByOwnerDto itemsByOwner = itemsAdapter.getItemsByOwner(walletId);
                 itemsByOwner.getItems().stream()
-                        .limit(4)
+                        .limit(10)
                         .forEach(item -> {
                             if (item.getCreators().size() != 0 && itemIsntUsersCreation(walletId, item)) {
                                 currentWallets.addAll(item.getCreators().stream().map(CreatorDto::getAccount).collect(Collectors.toList()));
@@ -72,6 +71,9 @@ public class NftRecommendationServiceImpl implements NftRecommendationService {
             return mapper.mapRecommendedItemsDto(items);
         }
 
+        if (currentWallets.size() > 10) {
+            currentWallets.subList(0, 10);
+        }
         return getRecommendedItems(depth - 1, currentWallets);
     }
 

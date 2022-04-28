@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +38,7 @@ public class Mapper {
                 .orElse(null);
     }
 
-    public RecommendedItemsDto mapRecommendedItemsDto(Map<String, List<ItemDto>> items) {
+    public RecommendedItemsDto mapRecommendedItemsDto(Map<String, Set<ItemDto>> items) {
         List<RecommendedAuthorDto> authors = new ArrayList<>();
         items.keySet().forEach(key -> {
             authors.add(RecommendedAuthorDto.builder()

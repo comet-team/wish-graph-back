@@ -15,5 +15,6 @@ public class ItemDto {
     private List<CreatorDto> creators;
     private String id;
     private MetaDto meta;
+    private String contract;
 }
 
