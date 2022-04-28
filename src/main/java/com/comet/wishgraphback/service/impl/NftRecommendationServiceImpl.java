@@ -43,7 +43,7 @@ public class NftRecommendationServiceImpl implements NftRecommendationService {
                         .limit(10)
                         .forEach(item -> {
                             OwnersResponseDto ownershipsByItem = ownershipAdapter.getOwnershipsByItem(item.getId());
-                            if (ownershipsByItem.getOwnerships().size() != 0 && itemIsSoldOut(walletId, ownershipsByItem)) {
+                            if (ownershipsByItem.getOwnerships().size() != 0 && itemIsntSoldOut(walletId, ownershipsByItem)) {
                                 if (!items.containsKey(walletId)) {
                                     items.put(walletId, new HashSet<>());
                                 }
@@ -81,7 +81,7 @@ public class NftRecommendationServiceImpl implements NftRecommendationService {
         return !item.getCreators().get(0).getAccount().equals(walletId);
     }
 
-    private boolean itemIsSoldOut(String walletId, OwnersResponseDto ownershipsByItem) {
+    private boolean itemIsntSoldOut(String walletId, OwnersResponseDto ownershipsByItem) {
         return !ownershipsByItem.getOwnerships().get(0).getOwner().equals(walletId);
     }
 }
